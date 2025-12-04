@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String // Hashed
+  teamName      String
+  dynastyPoints Int       @default(0)
+  dynastyTier   Tier      @default(BRONZE)
+  wins          Int       @default(0)
+  losses        Int       @default(0)
+  rerollTokens  Int       @default(3)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  roster       Roster?
+  leagues      LeagueMember[]
+  battlesAsChallenger Battle[] @relation("Challenger")
+  battlesAsDefender   Battle[] @relation("Defender")
+  perks        UserPerk[]
+  achievements UserAchievement[]
+  transactions Transaction[]
+}
+
+enum Tier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+model Player {
+  id          String   @id @default(cuid())
+  nflId       String   @unique
+  name        String
+  position    Position
+  team        String
+  rarity      Rarity
+  baseValue   Int
+  stats       Json // Current season stats
+  trendStatus Trend    @default(NEUTRAL)
+  isInjured   Boolean  @default(false)
+  isOnBye     Boolean  @default(false)
+
+  rosterPlayers RosterPlayer[]
+  capturedIn    Battle[]
+}
+
+enum Position {
+  QB
+  RB
+  WR
+  TE
+  DEF
+  K
+}
+
+enum Rarity {
+  COMMON
+  RARE
+  ELITE
+  LEGENDARY
+}
+
+enum Trend {
+  HOT
+  COLD
+  NEUTRAL
+}
+
+model Roster {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  totalValue Int     @default(0)
+  
+  players   RosterPlayer[]
+  formation Json? // Defensive formation (3 player IDs)
+}
+
+model RosterPlayer {
+  id        String   @id @default(cuid())
+  rosterId  String
+  roster    Roster   @relation(fields: [rosterId], references: [id])
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id])
+  contractWeeks Int  @default(10)
+  acquiredAt DateTime @default(now())
+
+  @@unique([rosterId, playerId])
+}
+
+model Battle {
+  id           String   @id @default(cuid())
+  challengerId String
+  challenger   User     @relation("Challenger", fields: [challengerId], references: [id])
+  defenderId   String
+  defender     User     @relation("Defender", fields: [defenderId], references: [id])
+  
+  winnerId     String?
+  rounds       Json // Details of each round (array stored as JSON)
+  
+  capturedPlayerId String?
+  capturedPlayer   Player? @relation(fields: [capturedPlayerId], references: [id])
+  
+  dpTransfer   Int      @default(0)
+  status       BattleStatus @default(PENDING)
+  createdAt    DateTime @default(now())
+  completedAt  DateTime?
+}
+
+enum BattleStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  FORFEIT
+}
+
+model League {
+  id             String   @id @default(cuid())
+  name           String
+  commissionerId String
+  password       String?
+  currentWeek    Int      @default(1)
+  
+  members        LeagueMember[]
+  schedule       Json?
+}
+
+model LeagueMember {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  leagueId String
+  league   League @relation(fields: [leagueId], references: [id])
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, leagueId])
+}
+
+model Perk {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  cost        Int
+  effect      Json
+  type        PerkType
+  
+  userPerks   UserPerk[]
+}
+
+enum PerkType {
+  DICE_MODIFIER
+  INJURY_INSURANCE
+  STAT_BOOST
+  CHALLENGE_SHIELD
+  SCOUT_REPORT
+}
+
+model UserPerk {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  perkId    String
+  perk      Perk     @relation(fields: [perkId], references: [id])
+  quantity  Int      @default(0)
+  activeUntil DateTime?
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  rewardType  RewardType
+  rewardValue Int
+  
+  userAchievements UserAchievement[]
+}
+
+enum RewardType {
+  DP
+  REROLL_TOKEN
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      TransactionType
+  amount    Int
+  description String
+  createdAt DateTime @default(now())
+}
+
+enum TransactionType {
+  EARN_DP
+  SPEND_DP
+  BATTLE_WIN
+  BATTLE_LOSS
+  PURCHASE_PERK
+}
