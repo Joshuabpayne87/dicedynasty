@@ -1,0 +1,65 @@
+﻿
+> dice-dynasty@1.0.0 build
+> next build
+
+   Γû▓ Next.js 16.0.7 (Turbopack)
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 3.8s
+   Running TypeScript ...
+node.exe : Failed to 
+compile.
+At C:\Users\joshu\AppD
+ata\Roaming\npm\npm.ps
+1:24 char:5
++     & "node$exe"  "$
+basedir/node_modules/n
+pm/bin/npm-cli.js" 
+$args
++     ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Failed to    
+ compile.:String)     
+[], RemoteExcepti    
+on
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+
+./prisma/seed.ts:1:24
+Type error: Module 
+'"@prisma/client"' 
+has no exported 
+member 'Rarity'.
+
+[0m[31m[1m>[22m[3
+9m[90m 1 |[39m 
+[36mimport[39m { [3
+3mPrismaClient[39m[3
+3m,[39m [33mRarity[
+39m[33m,[39m [33mPo
+sition[39m[33m,[39m
+ [33mTrend[39m } 
+[36mfrom[39m [32m'@
+prisma/client'[39m[3
+3m;[39m
+ [90m   |[39m       
+                 
+[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m 
+[36mconst[39m 
+prisma [33m=[39m 
+[36mnew[39m [33mPri
+smaClient[39m()[33m;
+[39m
+ [90m 4 |[39m[0m
+Next.js build worker 
+exited with code: 1 
+and signal: null
