@@ -4,14 +4,69 @@
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 15, 23, 42;
   --background-end-rgb: 15, 23, 42;
+
+  /* Rarity colors */
+  --legendary-from: #ffd700;
+  --legendary-to: #ffed4e;
+  --elite-from: #a855f7;
+  --elite-to: #3b82f6;
+  --rare: #3b82f6;
+  --common: #64748b;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+/* Rarity gradient classes */
+.rarity-legendary {
+  background: linear-gradient(135deg, var(--legendary-from), var(--legendary-to));
+}
+
+.rarity-elite {
+  background: linear-gradient(135deg, var(--elite-from), var(--elite-to));
+}
+
+.rarity-rare {
+  background: var(--rare);
+}
+
+.rarity-common {
+  background: var(--common);
+}
+
+/* Glow animations */
+@keyframes glow-legendary {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4);
+  }
+}
+
+@keyframes glow-elite {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.8), 0 0 40px rgba(168, 85, 247, 0.4);
+  }
+}
+
+.animate-glow-legendary {
+  animation: glow-legendary 2s ease-in-out infinite;
+}
+
+.animate-glow-elite {
+  animation: glow-elite 2s ease-in-out infinite;
 }

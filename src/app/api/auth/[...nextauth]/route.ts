@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db/client";
+import bcrypt from "bcryptjs";
 
 const handler = NextAuth({
     providers: [
@@ -19,8 +20,8 @@ const handler = NextAuth({
 
                 if (!user) return null;
 
-                // WARNING: In production, use bcrypt to compare hashed passwords
-                const isValid = credentials.password === user.password;
+                // Use bcrypt to compare hashed passwords
+                const isValid = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isValid) return null;
 

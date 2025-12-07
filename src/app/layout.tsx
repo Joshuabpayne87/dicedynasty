@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { ReactNode } from "react";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { SessionProvider } from "@/components/SessionProvider";
 
 export const metadata: Metadata = {
-    title: "Dice Dynasty Football League",
-    description: "Turn-based dice roll fantasy football game",
+    title: "Dice Dynasty",
+    description: "Roll the Dice. Build your Dynasty.",
 };
 
 export default function RootLayout({
     children,
 }: Readonly<{
-    children: React.ReactNode;
+    children: ReactNode;
 }>) {
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <body>
+                <SessionProvider>
+                    {children}
+                </SessionProvider>
+            </body>
         </html>
     );
 }
